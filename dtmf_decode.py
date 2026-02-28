@@ -20,8 +20,6 @@ for lf in LOW_FREQS:
         CHAR_TO_FREQ[(lf, hf)] = CHARS[i]
         i += 1
 
-TONE_SAMPLES = int(FS * TONE_MS / 1000)
-STEP = int(FS * (TONE_MS + GAP_MS) / 1000)
 
 def get_freqs(x):
     X = np.abs(np.fft.rfft(x))
@@ -30,16 +28,22 @@ def get_freqs(x):
     f = np.sort(freqs[idx])
     return f
 
+
 def nearest(f, arr):
     return min(arr, key=lambda x: abs(x - f))
 
-def main():
-    fs, sig = read("encoded.wav")
+
+def decode_wav(path="encoded.wav"):
+    fs, sig = read(path)
+    if sig.ndim > 1:
+        sig = sig[:, 0]
     sig = sig.astype(np.float32)
-    sig /= np.max(np.abs(sig))
+    sig /= (np.max(np.abs(sig)) + 1e-9)
 
     out = ""
     i = 0
+    TONE_SAMPLES = int(FS * TONE_MS / 1000)
+    STEP = int(FS * (TONE_MS + GAP_MS) / 1000)
     while i + TONE_SAMPLES < len(sig):
         frame = sig[i:i+TONE_SAMPLES]
         if np.max(np.abs(frame)) < 0.05:
@@ -52,7 +56,13 @@ def main():
         out += CHAR_TO_FREQ.get((lf, hf), "?")
         i += STEP
 
+    return out
+
+
+def main():
+    out = decode_wav("encoded.wav")
     print("Çözülen metin:", out)
+
 
 if __name__ == "__main__":
     main()
