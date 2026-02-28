@@ -1,68 +1,78 @@
-# DTMF Signal Encoding & Decoding with FFT
+# DTMF Encode/Decode Tool
 
-Bu projede, DTMF benzeri bir frekans tabanlı yöntem kullanılarak metin sinyal biçiminde
-kodlanmış, frekans alanında (FFT) analiz edilmiş ve tekrar çözümlenmiştir.
-Amaç; zaman domeni, frekans domeni ve iki baskın frekansın karakterleri nasıl temsil ettiğini
-uygulamalı olarak göstermektir.
+Bu küçük Python projesi, verilen bir metni DTMF tabanlı çift frekans tonlarına çevirir, bu ses dosyasını çözer ve frekans/tüsn elde etmek için grafikler üretir.
 
----
+## İçerik
 
-## Proje Özeti
-
-Çalışma üç ana aşamadan oluşmaktadır:
-
-1. **Kodlama (Encoding)**
-   - Girilen metindeki her karakter, iki farklı sinüs frekansının toplamı ile temsil edilmiştir.
-   - Oluşturulan sinyal `.wav` formatında kaydedilmiştir.
-
-2. **Frekans Analizi (FFT)**
-   - Kodlanan sinyalin zaman domeni grafiği çizilmiştir.
-   - FFT uygulanarak frekans domeninde her karakter için iki baskın tepe noktası gözlemlenmiştir.
-
-3. **Çözme (Decoding)**
-   - FFT sonucunda elde edilen frekanslar, karakter–frekans eşleme tablosu ile karşılaştırılarak
-     orijinal metin başarıyla geri elde edilmiştir.
-
----
-
-## Dosya Yapısı
-dtmf-signal-encoding-decoding/
-│
-├── dtmf_encode.py # Metni sinyal olarak kodlar ve encoded.wav oluşturur
-├── dtmf_decode.py # encoded.wav dosyasını çözerek metni geri elde eder
-├── plots.py # Zaman domeni ve FFT grafiklerini üretir
-├── encoded.wav # Kodlanmış ses sinyali
-├── zaman_domeni.png # Zaman domeni grafiği
-└── fft.png # FFT grafiği (iki baskın frekans tepe noktası)
+- `dtmf_encode.py` – Metni DTMF tonlarına dönüştürüp `encoded.wav` olarak kaydeder ve çalar.
+- `dtmf_decode.py` – `encoded.wav` dosyasını analiz ederek metni geri çıkarır.
+- `plots.py` – Zaman domeni ve FFT grafiğini hesaplar. Artık `report.png` adında tek bir rapor oluşturur ve çözülen metni başlıkta gösterir.
+- `run_all.py` – Üç betiği ardışık olarak çalıştırır. Tek komutla encode, decode ve grafik üretme.
+- `cleanup.py` – `fft.png` ve `zaman_domeni.png` gibi artık gereksiz dosyaları siler.
+- `encoded.wav` – Örnek olarak üretilebilen ses/ton dosyası.
 
 
+## Gereksinimler
 
+Python 3 ve aşağıdaki paketler:
 
----
+```sh
+pip install numpy scipy sounddevice soundfile matplotlib
+```
+
+(opsiyonel) `winsound` Windows ile birlikte gelir.
 
 ## Kullanım
 
-### 1) Kodlama
-```bash
+Aşağıdaki komutları proje dizininde çalıştırın.
+
+### Tüm adımları çalıştırma
+
+```powershell
+python run_all.py
+```
+
+Bu komut önce metin isteyecek, sonra encode/decode yapacak ve `report.png` dosyasını oluşturacaktır.
+
+Belirli bir metin vermek için:
+
+```powershell
+python run_all.py -t "MERHABA DÜNYA"
+```
+
+### Sadece encode
+
+```powershell
 python dtmf_encode.py
-Kullanıcıdan metin alınır, encoded.wav dosyası oluşturulur ve ses çalınır.
+```
+
+### WAV dosyasını dinleme
+
+PowerShell'de:
+```powershell
+start encoded.wav
+```
+
+veya Python içinde:
+
+```python
+import winsound
+winsound.PlaySound("encoded.wav", winsound.SND_FILENAME)
+```
+
+### Gereksiz dosyaları temizleme
+
+```powershell
+python cleanup.py
+```
 
 
-2) Grafiklerin Oluşturulması
-python plots.py
-Zaman domeni ve FFT grafikleri otomatik olarak PNG formatında kaydedilir.
+## Dosyalar nerede?
 
-3) Çözme
-python dtmf_decode.py
-Kodlanan ses dosyası çözülür ve orijinal metin terminalde gösterilir.
+- `encoded.wav` ve `report.png` proje kökünde oluşturulur.
 
-Sonuçlar
+> **Not:** Proje Windows için tasarlanmıştır; paketler veya ses çalma komutları diğer platformlarda farklı olabilir.
 
-Zaman domeninde sinyalin yapısı açıkça gözlemlenmiştir.
+---
 
-FFT grafiğinde her karakter için iki baskın frekans tepe noktası net olarak görülmüştür.
-
-Çözme aşamasında metin hatasız şekilde geri elde edilmiştir.
-
-Bu sonuçlar, frekans tabanlı sinyal kodlama ve çözme işleminin başarıyla
-gerçekleştirildiğini göstermektedir.
+Herhangi bir sorunuz olursa lütfen bildirin!
